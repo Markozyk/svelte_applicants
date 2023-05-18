@@ -1,5 +1,5 @@
 <script lang="ts">
-	/**
+  /**
     Main component for handling the filter and columns buttons across all tables 
    
     Props:
@@ -9,68 +9,89 @@
     Unused code: 
             <!-- {$_('exchanges.filters_button')} --> 
     */
-	import { popup } from '@skeletonlabs/skeleton';
+  import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 
-	import { ListBox, ListBoxItem } from '@skeletonlabs/skeleton';
+  // Props
+  export let target: 'columnPopup' | 'filterPopup';
+  export let title: string = 'Placeholder';
 
-    // Props 
-	export let target: 'columnPopup' | 'filterPopup';
-    export let title: string = "Placeholder"
+  import FilterIcon from '../lib/icons/FilterIcon.svelte';
+  import ColumnIcon from '../lib/icons/ColumnIcon.svelte';
 
-	import { SlideToggle } from '@skeletonlabs/skeleton';
+  let isOpen = false;
 
+  const filterOptions = [
+    {
+      id: 1,
+      value: 'value1',
+      label: 'Non KYC',
+    },
+    {
+      id: 2,
+      value: 'value2',
+      label: 'Non KYC',
+    },
+    {
+      id: 3,
+      value: 'value3',
+      label: 'Non KYC',
+    },
+  ];
 
-	let filterPopup  = {
-		event: 'click',
-		target: target,
-		placement: 'bottom'
-	};
+  const columnOptions = [
+    {
+      id: 1,
+      value: 'value1',
+      label: 'Column Option 1',
+    },
+    {
+      id: 2,
+      value: 'value2',
+      label: 'Column Option 2',
+    },
+    {
+      id: 3,
+      value: 'value3',
+      label: 'Column Option 3',
+    },
+  ];
+
+  let filterPopup: PopupSettings = {
+    event: 'click',
+    target: target,
+    placement: 'bottom',
+    state: ({ state }) => (isOpen = state),
+  };
 </script>
 
 <button
-	class="btn flex flex-row justify-start btn-sm min-w-[45px]  rounded-md border-2 dark:border-surface-600 border-[#EDF1F7] !text-base md:px-4 h-11 "
-	use:popup={filterPopup}
+  class="btn flex justify-center btn-sm min-w-[45px] rounded-md border-[1px] p-4 dark:border-surface-600 border-[#EDF1F7] !text-base md:px-[18] h-11 disabled:!opacity-100 disabled:!border-[#EDF1F7] disabled:!bg-[#EDF1F7]"
+  disabled={isOpen}
+  use:popup={filterPopup}
 >
-	<span class="   stroke-[#6C6C85] dark:stroke-slate-300">
-		<!-- <FilterIcon /> -->
-	</span>
-	<span class="font-sans !text-[#6C6C85]">
-        {title}
-	</span>
+  {#if target === 'filterPopup'}
+    <FilterIcon className={'stroke-[#6C6C85] fill-[#6C6C85] dark:stroke-white dark:fill-white'} />
+  {:else}
+    <ColumnIcon className={'stroke-[#6C6C85] dark:stroke-white'} />
+  {/if}
+  <span class="font-sans text-[#6C6C85] dark:text-white">
+    {title}
+  </span>
 </button>
 
-
-
-<div class="card w-48 shadow-xl py-2 z-40" data-popup="filterPopup">
-	<ListBox rounded="rounded-none">
-		<ListBoxItem name="medium"  value="books">
-			<svelte:fragment slot="lead">
-				<SlideToggle
-					name="slider-large"
-					value="books"
-					active="bg-surface-backdrop-token"
-					size="sm"
-				/>
-			</svelte:fragment>
-			TitlePlaceholder
-		</ListBoxItem>
-	</ListBox>
-	<div class="arrow bg-surface-100-800-token" />
-</div>
-
-<div class="card w-48 shadow-xl py-2 z-40" data-popup="columnPopup">
-	<ListBox rounded="rounded-none">
-		<ListBoxItem name="medium"  value="books">
-			<svelte:fragment slot="lead">
-				<SlideToggle
-					name="slider-large"
-					value="books"
-					active="bg-surface-backdrop-token"
-					size="sm"
-				/>
-			</svelte:fragment>
-			TitlePlaceholder
-		</ListBoxItem>
-	</ListBox>
-	<div class="arrow bg-surface-100-800-token" />
+<div data-popup={target}>
+  <div class="card bg-white w-auto flex flex-col shadow-xl py-4 z-40 gap-6">
+    {#each target === 'filterPopup' ? filterOptions : columnOptions as { id, value, label } (id)}
+      <label class="flex items-center justify-start w-full px-4 cursor-pointer text-[#6C6C85] dark:text-white">
+        <input
+          type="checkbox"
+          class="checkbox border-[#EDF1F7] bg-transparent checked:!bg-[#00AEEF] focus:border-inherit"
+          group={target}
+          {value}
+        />
+        <p class="ml-3">{label}</p>
+      </label>
+    {/each}
+  </div>
+  <div class="arrow bg-surface-100-800-token" />
 </div>
